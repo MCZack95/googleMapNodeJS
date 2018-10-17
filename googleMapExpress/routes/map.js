@@ -1,26 +1,23 @@
 const googleMapsClient = require('@google/maps').createClient({
-    key: 'AIzaSyB4UWA6MysWfO-lOE0WBXp-o7rFvPiZlcI',
-    Promise: Promise
+    key: 'AIzaSyB4UWA6MysWfO-lOE0WBXp-o7rFvPiZlcI'
   }
 );
 
-var getLatLng = (givenAddress) => { // get latlng using address
-    googleMapsClient.geocode({ address : givenAddress })
-    .asPromise()
-    .then((response) => {
-        console.log(response.json.results);
-        ////////////// TODO //////////////
-        // Update Database
-        // Update Map
-    })
-    .catch((err) => {
-        console.log(err);
-    });
+module.exports.getAddressDetails = (givenAddress, res) => { // get latlng using address
+    googleMapsClient.geocode(
+        {address : givenAddress},
+        function(err, response){
+            if(!err){
+                console.log(response.json.results);
+                res.send(response.json.results);
+                // Update Database
+            }else{
+                console.log(err);
+            }
+        }
+    );
 }
 
-var updateMap = (latLng) => { // put marker on map
+module.exports.updateMap = (latLng) => { // put marker on map
     // do something
 }
-
-module.exports.getLatLng = getLatLng;
-module.exports.updateMap = updateMap;
