@@ -112,7 +112,7 @@ block content
 
         function prevMarker(){
             if(markerCounter == 0){
-                markerCounter = numOfValidAddress(addressList) - 1;
+                markerCounter = num - 1;
                 var latLng = new google.maps.LatLng(addressList[markerCounter].lat, addressList[markerCounter].lng);
                 map.panTo(latLng);
             }else{
@@ -123,7 +123,7 @@ block content
         }
 
         function nextMarker(){
-            if(markerCounter == numOfValidAddress(addressList) - 1){
+            if(markerCounter == num - 1){
                 markerCounter = 0;
                 var latLng = new google.maps.LatLng(addressList[markerCounter].lat, addressList[markerCounter].lng);
                 map.panTo(latLng);
@@ -132,41 +132,6 @@ block content
                 var latLng = new google.maps.LatLng(addressList[markerCounter].lat, addressList[markerCounter].lng);
                 map.panTo(latLng);
             }
-        }
-
-        function initMap() {
-            initVars();
-
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: 1.352083, lng: 103.819836 }, // LatLng of Singapore
-                zoom: 11.5
-            });
-
-            addressList.forEach(function(sc) {
-                if(sc.address != ""){
-                    var marker = new google.maps.Marker({
-                        position: new google.maps.LatLng(sc.lat,sc.lng),
-                        map: map,
-                        title: sc.address,
-                        animation: google.maps.Animation.DROP,
-                        icon: {
-                            url: parseIcon(sc.type),
-                            scaledSized: new google.maps.Size(23, 33)
-                        }
-                    });
-                    var infoWindow = new google.maps.InfoWindow({
-                        content: `Location: ${sc.address}, Lat: ${sc.lat} ,Lng: ${sc.lng}`
-                    });
-                    marker.addListener('click', function(){
-                        infoWindow.open(map, marker);
-                    });
-                    if(isEmpty(currentMarker)){
-                        currentMarker.address = sc.address;
-                        currentMarker.lat = sc.lat;
-                        currentMarker.lng = sc.lng;
-                    } 
-                }
-            });
         }
 
         function parseIcon(type){
@@ -190,16 +155,6 @@ block content
             return true;
         }
 
-        function numOfValidAddress(obj){
-            var counter = 0;
-            obj.forEach(function(element){
-                if(element.address != ""){
-                    counter++;
-                }
-            });
-            return counter;
-        }
-
         // Initialize all data from DB
         function initVars(){
             var addressString = "#{addressArrayString}";
@@ -221,6 +176,42 @@ block content
                 locationDetails.type = typeArray[arrayCounter];
                 addressList.push(locationDetails);
                 arrayCounter++;
+            });
+        }
+
+        function initMap() {
+            initVars();
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 1.352083, lng: 103.819836 }, // LatLng of Singapore
+                zoom: 11.5
+            });
+
+            addressList.forEach(function(sc) {
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(sc.lat,sc.lng),
+                    map: map,
+                    title: sc.address,
+                    animation: google.maps.Animation.DROP,
+                    icon: {
+                        url: parseIcon(sc.type),
+                        scaledSized: new google.maps.Size(23, 33)
+                    }
+                });
+
+                var infoWindow = new google.maps.InfoWindow({
+                    content: `Location: ${sc.address}, Lat: ${sc.lat} ,Lng: ${sc.lng}`
+                });
+
+                marker.addListener('click', function(){
+                    infoWindow.open(map, marker);
+                });
+
+                if(isEmpty(currentMarker)){
+                    currentMarker.address = sc.address;
+                    currentMarker.lat = sc.lat;
+                    currentMarker.lng = sc.lng;
+                } 
             });
         }
 
